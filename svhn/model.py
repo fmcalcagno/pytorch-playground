@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.utils.model_zoo as model_zoo
 import os
 from collections import OrderedDict
-from utee import misc
+import misc
 print = misc.logger.info
 
 model_urls = {

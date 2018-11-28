@@ -16,7 +16,7 @@ def get(batch_size, data_root='/tmp/public_dataset/pytorch', train=True, val=Tru
     if train:
         train_loader = torch.utils.data.DataLoader(
             datasets.SVHN(
-                root=data_root, split='train', download=True,
+                root=data_root, split='train', download=False,
                 transform=transforms.Compose([
                     transforms.ToTensor(),
                     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
@@ -29,7 +29,7 @@ def get(batch_size, data_root='/tmp/public_dataset/pytorch', train=True, val=Tru
     if val:
         test_loader = torch.utils.data.DataLoader(
             datasets.SVHN(
-                root=data_root, split='test', download=True,
+                root=data_root, split='test', download=False,
                 transform=transforms.Compose([
                     transforms.ToTensor(),
                     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
