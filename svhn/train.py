@@ -11,6 +11,8 @@ import dataset_digits
 
 import model
 from IPython import embed
+import matplotlib.pyplot as plt
+import numpy as np
 
 parser = argparse.ArgumentParser(description='PyTorch SVHN Example')
 parser.add_argument('--channel', type=int, default=32, help='first conv channel (default: 32)')
@@ -24,10 +26,10 @@ parser.add_argument('--seed', type=int, default=117, help='random seed (default:
 parser.add_argument('--log_interval', type=int, default=10,  help='how many batches to wait before logging training status')
 parser.add_argument('--test_interval', type=int, default=10,  help='how many epochs to wait before another test')
 parser.add_argument('--logdir', default='log', help='folder to save to the log')
-parser.add_argument('--data_root', default="C:\\Users\\fcalcagno\\Documents\\pytorch-playground\\svhn\\testingimages\\", help='folder to save the model')
-parser.add_argument('--csv_path', default="C:\\Users\\fcalcagno\\Documents\\pytorch-playground\\svhn\\labels.csv", help='csv with the labels')
+parser.add_argument('--data_root', default="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\testingimages\\", help='folder to save the model')
+parser.add_argument('--csv_path', default="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\labels.csv", help='csv with the labels')
 parser.add_argument('--decreasing_lr', default='80,120', help='decreasing strategy')
-parser.add_argument('--use_pretrained',  type=bool, default=None, help='Use pretrained model or not')
+parser.add_argument('--use_pretrained',  default="Internet", help='Use pretrained model or not')
 
 args = parser.parse_args()
 args.logdir = os.path.join(os.path.dirname(__file__), args.logdir)

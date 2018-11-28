@@ -16,27 +16,32 @@ from PIL import Image
 import matplotlib.pyplot as plt
 
 from sklearn.metrics import average_precision_score,classification_report
-
+from PIL import Image
 
 use_cuda = torch.cuda.is_available()
-folder_data = "C:\\Users\\fcalcagno\\Documents\\pytorch-playground\\svhn\\data"
+folder_data = "C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\data"
 
-model_svhn = model.svhn(32,pretrained=True)
+model_svhn = model.svhn(32,pretrained="Local")
 
-folder_input = "C:\\Users\\fcalcagno\\Documents\\pytorch-playground\\svhn\\testingimages"
+folder_input = "C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\testingimages"
 
-images = [(cv2.imread(file),file) for file in glob.glob("C:\\Users\\fcalcagno\\Documents\\pytorch-playground\\svhn\\testingimages\\*.png")]
+images = [(cv2.imread(file),file) for file in glob.glob("C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\testingimages\\*.png")]
 
 
 class MyDataset(Dataset):
     def __init__(self, transform=None, target_transform=None):
-        self.data = [(cv2.imread(file),file) for file in glob.glob("C:\\Users\\fcalcagno\\Documents\\pytorch-playground\\svhn\\testingimages\\*.png")]
+        self.data = [(cv2.imread(file),file) for file in glob.glob("C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\testingimages\\*.png")]
+        #self.data = [(Image.open(file),file) for file in glob.glob("C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\testingimages\\*.png")]
         #self.target = y
         self.transform = transform
         
     def __getitem__(self, index):
         img1=self.data[index][0]
         img1 = cv2.resize(img1, (32, 32)) 
+
+        #data = Image.open(img_name).convert("RGB")
+        #img1 = img1.resize((32, 32)) 
+
         filename=os.path.basename(self.data[index][1])
         # Normalize your data here
         if self.transform:
@@ -63,6 +68,7 @@ model = model_svhn.to(device)
 predictions=[]
 reality=[]
 torch.set_printoptions(precision=3,profile="short")
+good,total=0,0
 
 print ("Image Name, Reality, Prediction , Probabilities (1,2,3,4,5,6,7,8,9,0)")
 for batch_id,(im,filename) in enumerate(val_loader):
@@ -82,10 +88,14 @@ for batch_id,(im,filename) in enumerate(val_loader):
         soft=F.softmax(result, dim=1)
         
         print("Image Name: {}, Reality:{}, Prediction:{}, Probabilities:{}".format(filename,real,pred.cpu().data.numpy()[0,0],soft.data[0]))
+        if real==pred.cpu().data.numpy()[0,0]:
+            good+=1
+        total+=1
 
 print("Predictions: {}, Reality:{}".format(predictions,reality))
+print("Good: {}, total:{}".format(good,total))
 
 
-#target_names = ['0', '1', '2','3','4','5','6','7','8','9']
+target_names = ['0', '1', '2','3','4','5','6','7','8','9']
 #target_names = ['0', '1']
 #print(classification_report(reality, predictions, target_names=target_names))

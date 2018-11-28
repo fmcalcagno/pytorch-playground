@@ -6,6 +6,7 @@ import os
 from PIL import Image
 import pandas as pd
 import numpy as np
+import cv2
 
 class MyDigitsDataset(Dataset):
     def __init__(self, csv_path,img_path, transform=None):
@@ -23,11 +24,15 @@ class MyDigitsDataset(Dataset):
         
     def __getitem__(self, index):
         # stuff
-        single_image_label = self.labels[index]
+        single_image_label = self.labels[index] -1
+        if single_image_label==-1:
+            single_image_label=9
 
         img_name = os.path.join(self.img_path,self.name_files[index])
-        data = Image.open(img_name).convert("RGB")
-        #img = img.resize((32, 32)) 
+        data = Image.open(img_name)
+        #data = data.resize((32, 32)) 
+        #data=cv2.imread(img_name)
+        #data = cv2.resize(data, (32, 32)) 
         #data = np.asarray(img)
         #data = np.transpose(data,(2,0,1))
         if self.transform is not None:
@@ -54,9 +59,9 @@ def get(batch_size, csv_path='', data_root='/tmp/public_dataset/pytorch', train=
             MyDigitsDataset(
                 csv_path=csv_path, img_path=data_root,
                 transform=transforms.Compose([
-                    transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1),
-                    transforms.RandomAffine(10,scale=(0.95,1),shear=5),
-                    transforms.Resize((32,32), interpolation=2),
+                    transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.2),
+                    transforms.RandomAffine(10,scale=(0.08,1),shear=10),
+                    transforms.Resize((32,32)),
                     transforms.ToTensor(),
                     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
                 ])

@@ -9,12 +9,12 @@ import numpy as np
 
 from scipy import ndimage
 
-folder_data = "C:\\Users\\fcalcagno\\Documents\\pytorch-playground\\svhn\\data"
+folder_data = "C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\data"
 
 
-folder_input = "C:\\Users\\fcalcagno\\Documents\\pytorch-playground\\svhn\\testingimages"
+folder_input = "C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\testingimages"
 
-images = [(cv2.imread(file,1),file) for file in glob.glob("C:\\Users\\fcalcagno\\Documents\\pytorch-playground\\svhn\\testingimages\\*.png")]
+images = [(cv2.imread(file,1),file) for file in glob.glob("C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\testingimages\\*.png")]
 
 
 def adjust_gamma(image, gamma=1.0):
