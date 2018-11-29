@@ -30,6 +30,7 @@ parser.add_argument('--data_root', default="C:\\Users\\fcalcagno\\Documents\\pyt
 parser.add_argument('--csv_path', default="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\labels.csv", help='csv with the labels')
 parser.add_argument('--decreasing_lr', default='80,120', help='decreasing strategy')
 parser.add_argument('--use_pretrained',  default="Internet", help='Use pretrained model or not')
+parser.add_argument('--local_model',  default="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\log\\best-90.pth", help='Where the local model is located')
 
 args = parser.parse_args()
 args.logdir = os.path.join(os.path.dirname(__file__), args.logdir)
@@ -58,7 +59,7 @@ if args.cuda:
 # data loader and model
 train_loader, test_loader = dataset_digits.get(batch_size=args.batch_size, csv_path=args.csv_path, data_root=args.data_root, num_workers=1)
 
-model = model.svhn(n_channel=args.channel,pretrained=args.use_pretrained)
+model = model.svhn(n_channel=args.channel,pretrained=args.use_pretrained,localmodel=args.local_model)
 model = torch.nn.DataParallel(model, device_ids= range(args.ngpu))
 if args.cuda:
     model.cuda()
