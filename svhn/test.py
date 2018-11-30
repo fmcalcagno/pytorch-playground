@@ -19,20 +19,16 @@ from sklearn.metrics import average_precision_score,classification_report
 from PIL import Image
 
 use_cuda = torch.cuda.is_available()
-folder_data = "C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\data"
 
-model_svhn = model.svhn(32,pretrained="Local",local_model="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\log\\best-70.pth")
+model_svhn = model.svhn(32,pretrained="Local",local_model="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\log\\best-719.pth")
 
-folder_input = "C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\testingimages"
 
-images = [(cv2.imread(file),file) for file in glob.glob("C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\testingimages\\*.png")]
 
 
 class MyDataset(Dataset):
     def __init__(self, transform=None, target_transform=None):
-        self.data = [(cv2.imread(file),file) for file in glob.glob("C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\testingimages\\*.png")]
-        #self.data = [(Image.open(file),file) for file in glob.glob("C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\testingimages\\*.png")]
-        #self.target = y
+        self.data = [(cv2.imread(file),file) for file in glob.glob("C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\testingimages\\test\\*.png")]
+
         self.transform = transform
         
     def __getitem__(self, index):

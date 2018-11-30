@@ -18,7 +18,7 @@ from PIL import Image
 parser = argparse.ArgumentParser(description='PyTorch SVHN Example')
 parser.add_argument('--channel', type=int, default=32, help='first conv channel (default: 32)')
 parser.add_argument('--wd', type=float, default=0.001, help='weight decay')
-parser.add_argument('--batch_size', type=int, default= 4, help='input batch size for training (default: 64)')
+parser.add_argument('--batch_size', type=int, default= 8, help='input batch size for training (default: 64)')
 parser.add_argument('--epochs', type=int, default=1, help='number of epochs to train (default: 10)')
 parser.add_argument('--lr', type=float, default=0.001, help='learning rate (default: 1e-3)')
 parser.add_argument('--gpu', default=1, help='index of gpus to use')
@@ -29,8 +29,8 @@ parser.add_argument('--test_interval', type=int, default=1,  help='how many epoc
 parser.add_argument('--logdir', default='log', help='folder to save to the log')
 parser.add_argument('--data_root', default="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\testingimages\\", help='folder to save the model')
 parser.add_argument('--csv_path', default="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\labels.csv", help='csv with the labels')
-parser.add_argument('--decreasing_lr', default='80,120', help='decreasing strategy')
-parser.add_argument('--use_pretrained',  default="Local", help='Use pretrained model or not')
+parser.add_argument('--decreasing_lr', default='100,200,300,400,500,600,700,800,900', help='decreasing strategy')
+parser.add_argument('--use_pretrained',  default="Internet", help='Use pretrained model or not')
 parser.add_argument('--local_model',  default="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\log\\best-90.pth", help='Where the local model is located')
 
 args = parser.parse_args()
@@ -68,6 +68,7 @@ optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.wd)
 decreasing_lr = list(map(int, args.decreasing_lr.split(',')))
 print('decreasing_lr: ' + str(decreasing_lr))
 best_acc, old_file = 0, None
+best_loss= 50000
 t_begin = time.time()
 
 
@@ -76,7 +77,7 @@ try:
     for epoch in range(args.epochs):
         model.train()
         if epoch in decreasing_lr:
-            optimizer.param_groups[0]['lr'] *= 0.1
+            optimizer.param_groups[0]['lr'] *= 0.5
         for batch_idx, (data, target) in enumerate(train_loader):
             indx_target = target.clone()
             if args.cuda:
@@ -124,10 +125,12 @@ try:
                 acc = 100. * correct / len(test_loader.dataset)
                 print('\tTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)'.format(
                     test_loss, correct, len(test_loader.dataset), acc))
-                if acc > best_acc:
+                #if acc > best_acc:
+                if test_loss< best_loss:
                     new_file = os.path.join(args.logdir, 'best-{}.pth'.format(epoch))
                     misc.model_snapshot(model, new_file, old_file=old_file, verbose=True)
-                    best_acc = acc
+                    #best_acc = acc
+                    best_loss=test_loss
                     old_file = new_file
 except Exception as e:
     import traceback
