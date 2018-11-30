@@ -21,7 +21,7 @@ from PIL import Image
 use_cuda = torch.cuda.is_available()
 folder_data = "C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\data"
 
-model_svhn = model.svhn(32,pretrained="Local")
+model_svhn = model.svhn(32,pretrained="Local",local_model="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\log\\best-70.pth")
 
 folder_input = "C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\testingimages"
 
@@ -37,7 +37,7 @@ class MyDataset(Dataset):
         
     def __getitem__(self, index):
         img1=self.data[index][0]
-        img1 = cv2.resize(img1, (32, 32)) 
+        img1= cv2.resize(img1, (32, 32)) 
 
         #data = Image.open(img_name).convert("RGB")
         #img1 = img1.resize((32, 32)) 

@@ -29,7 +29,7 @@ class MyDigitsDataset(Dataset):
             single_image_label=9
 
         img_name = os.path.join(self.img_path,self.name_files[index])
-        data = Image.open(img_name)
+        data = Image.open(img_name).convert('RGB')
         #data = data.resize((32, 32)) 
         #data=cv2.imread(img_name)
         #data = cv2.resize(data, (32, 32)) 
@@ -44,11 +44,11 @@ class MyDigitsDataset(Dataset):
     def __len__(self):
         return len(self.labels) 
 
-def get(batch_size, csv_path='', data_root='/tmp/public_dataset/pytorch', train=True, val=True, **kwargs):
+def get(batch_size, csv_path='', data_root='/tmp/public_dataset/pytorch', train=True, val=True, show=False, **kwargs):
     #data_root = os.path.expanduser(os.path.join(data_root, 'svhn-data'))
-    num_workers = kwargs.setdefault('num_workers', 1)
+    num_workers = kwargs.setdefault('num_workers', 0)
     kwargs.pop('input_size', None)
-    print("Building SVHN data loader with {} workers".format(num_workers))
+    #print("Building SVHN data loader with {} workers".format(num_workers))
 
     def target_transform(target):
         return int(target[0]) - 1
@@ -59,8 +59,9 @@ def get(batch_size, csv_path='', data_root='/tmp/public_dataset/pytorch', train=
             MyDigitsDataset(
                 csv_path=csv_path, img_path=data_root,
                 transform=transforms.Compose([
-                    transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.2),
-                    transforms.RandomAffine(10,scale=(0.08,1),shear=10),
+                    transforms.RandomApply(
+                        [transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4, hue=0.3),
+                        transforms.RandomAffine(10,scale=(0.8,1),shear=10,fillcolor=0)], p=0.8),
                     transforms.Resize((32,32)),
                     transforms.ToTensor(),
                     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
@@ -74,13 +75,29 @@ def get(batch_size, csv_path='', data_root='/tmp/public_dataset/pytorch', train=
             MyDigitsDataset(
                 csv_path=csv_path, img_path=data_root,
                 transform=transforms.Compose([
-                    transforms.Resize((32,32), interpolation=2),
+                    transforms.Resize((32,32)),
                     transforms.ToTensor(),
                     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
                 ])
             ),      
             batch_size=batch_size, shuffle=False, **kwargs)
         ds.append(test_loader)
+    
+
+    if show:
+        show_loader = torch.utils.data.DataLoader(
+            MyDigitsDataset(
+                csv_path=csv_path, img_path=data_root,
+                transform=transforms.Compose([
+                    transforms.RandomApply(
+                        [transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4, hue=0.3),
+                        transforms.RandomAffine(10,scale=(0.8,1),shear=10,fillcolor=0)], p=0.8),
+                    #transforms.Resize((32,32)),
+                    transforms.ToTensor()
+                ])
+            ),
+            batch_size=batch_size, shuffle=True, **kwargs)
+        ds.append(show_loader)
     ds = ds[0] if len(ds) == 1 else ds
     return ds
 

@@ -13,23 +13,24 @@ import model
 from IPython import embed
 import matplotlib.pyplot as plt
 import numpy as np
+from PIL import Image
 
 parser = argparse.ArgumentParser(description='PyTorch SVHN Example')
 parser.add_argument('--channel', type=int, default=32, help='first conv channel (default: 32)')
 parser.add_argument('--wd', type=float, default=0.001, help='weight decay')
-parser.add_argument('--batch_size', type=int, default=1, help='input batch size for training (default: 64)')
+parser.add_argument('--batch_size', type=int, default= 4, help='input batch size for training (default: 64)')
 parser.add_argument('--epochs', type=int, default=1, help='number of epochs to train (default: 10)')
 parser.add_argument('--lr', type=float, default=0.001, help='learning rate (default: 1e-3)')
 parser.add_argument('--gpu', default=1, help='index of gpus to use')
 parser.add_argument('--ngpu', type=int, default=1, help='number of gpus to use')
 parser.add_argument('--seed', type=int, default=117, help='random seed (default: 1)')
-parser.add_argument('--log_interval', type=int, default=10,  help='how many batches to wait before logging training status')
-parser.add_argument('--test_interval', type=int, default=10,  help='how many epochs to wait before another test')
+parser.add_argument('--log_interval', type=int, default=1,  help='how many batches to wait before logging training status')
+parser.add_argument('--test_interval', type=int, default=1,  help='how many epochs to wait before another test')
 parser.add_argument('--logdir', default='log', help='folder to save to the log')
 parser.add_argument('--data_root', default="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\testingimages\\", help='folder to save the model')
 parser.add_argument('--csv_path', default="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\labels.csv", help='csv with the labels')
 parser.add_argument('--decreasing_lr', default='80,120', help='decreasing strategy')
-parser.add_argument('--use_pretrained',  default="Internet", help='Use pretrained model or not')
+parser.add_argument('--use_pretrained',  default="Local", help='Use pretrained model or not')
 parser.add_argument('--local_model',  default="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\log\\best-90.pth", help='Where the local model is located')
 
 args = parser.parse_args()
@@ -52,14 +53,12 @@ print("========================================")
 args.cuda = torch.cuda.is_available()
 torch.manual_seed(args.seed)
 if args.cuda:
-
-    
     torch.cuda.manual_seed(args.seed)
 
 # data loader and model
-train_loader, test_loader = dataset_digits.get(batch_size=args.batch_size, csv_path=args.csv_path, data_root=args.data_root, num_workers=1)
+train_loader, test_loader = dataset_digits.get(batch_size=args.batch_size, csv_path=args.csv_path, data_root=args.data_root, num_workers=0)
 
-model = model.svhn(n_channel=args.channel,pretrained=args.use_pretrained,localmodel=args.local_model)
+model = model.svhn(n_channel=args.channel,pretrained=args.use_pretrained,local_model=args.local_model)
 model = torch.nn.DataParallel(model, device_ids= range(args.ngpu))
 if args.cuda:
     model.cuda()
@@ -70,6 +69,9 @@ decreasing_lr = list(map(int, args.decreasing_lr.split(',')))
 print('decreasing_lr: ' + str(decreasing_lr))
 best_acc, old_file = 0, None
 t_begin = time.time()
+
+
+
 try:
     for epoch in range(args.epochs):
         model.train()
@@ -114,7 +116,7 @@ try:
                         data, target = data.cuda(), target.cuda()#.long().squeeze()
                     data, target = Variable(data), Variable(target)
                     output = model(data)
-                    test_loss += F.cross_entropy(output, target).data[0]
+                    test_loss += F.cross_entropy(output, target).item()
                     pred = output.data.max(1)[1]  # get the index of the max log-probability
                     correct += pred.cpu().eq(indx_target).sum()
 

@@ -87,28 +87,31 @@ def holesearch(img):
 for img,file in  images:
     img = cv2.resize(img, (32, 32)) 
     #blur = cv2.GaussianBlur(img,(5,5),0)
-    #median = cv2.medianBlur(img,5)t
+    median = cv2.medianBlur(img,5)
 
     #hole search
     plt.subplot(151),plt.imshow(img),plt.title('Original')
     plt.xticks([]), plt.yticks([])
-    hole,hole2,im_out = holesearch(img)
-    adjusted = adjust_gamma(img, gamma=0.8)
+    hole,hole2,im_out2 = holesearch(img)
+    hole,hole2,im_out = holesearch(median)
+    adjusted = adjust_gamma(im_out2, gamma=0.8)
     
     
     
-    plt.subplot(152),plt.imshow(hole),plt.title('Hole Filter')
-    plt.xticks([]), plt.yticks([])
-    plt.subplot(153),plt.imshow(hole2),plt.title('Hole Filter 2')
-    plt.xticks([]), plt.yticks([])
-    plt.subplot(154),plt.imshow(im_out),plt.title('Fixed Image')
-    plt.xticks([]), plt.yticks([])
-    plt.subplot(155),plt.imshow(adjusted),plt.title('Fixed Image Contrast')
-    plt.xticks([]), plt.yticks([])
+    # plt.subplot(152),plt.imshow(hole),plt.title('Hole Filter')
+    # plt.xticks([]), plt.yticks([])
+    # plt.subplot(153),plt.imshow(hole2),plt.title('Hole Filter 2')
+    # plt.xticks([]), plt.yticks([])
+    # plt.subplot(154),plt.imshow(im_out),plt.title('Fixed Image')
+    # plt.xticks([]), plt.yticks([])
+    # plt.subplot(155),plt.imshow(adjusted),plt.title('Fixed Image Contrast')
+    # plt.xticks([]), plt.yticks([])
 
 
-    plt.show()
+
+    # plt.show()
     base=os.path.basename(file)
+    cv2.imwrite(".\\testingimages\\median-" + base, im_out)
     cv2.imwrite(".\\testingimages\\modified-" + base, adjusted)
     #cv2.waitKey(0)                 # Waits forever for user to press any key
     #cv2.destroyAllWindows() 
