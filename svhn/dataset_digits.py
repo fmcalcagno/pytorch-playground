@@ -7,6 +7,7 @@ from PIL import Image
 import pandas as pd
 import numpy as np
 import cv2
+from elastic_transform import ElasticTransform
 
 class MyDigitsDataset(Dataset):
     def __init__(self, csv_path,img_path, transform=None):
@@ -59,12 +60,13 @@ def get(batch_size, csv_path='', data_root='/tmp/public_dataset/pytorch', train=
             MyDigitsDataset(
                 csv_path=csv_path, img_path=data_root,
                 transform=transforms.Compose([
-                    transforms.RandomChoice(
+                    transforms.RandomApply(
                         [transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.3),
                         transforms.RandomRotation(15),
                         transforms.RandomAffine(0,scale=(0.7,0.9)),
                         transforms.RandomAffine(0,scale=(1.1,1.2)),
-                        transforms.RandomAffine(0,shear=10)]),
+                        transforms.RandomAffine(0,shear=10),
+                        ElasticTransform(1000,30)],p=0.5),
                     transforms.Resize((32,32)),
                     transforms.ToTensor(),
                     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
@@ -91,13 +93,14 @@ def get(batch_size, csv_path='', data_root='/tmp/public_dataset/pytorch', train=
         show_loader = torch.utils.data.DataLoader(
             MyDigitsDataset(
                 csv_path=csv_path, img_path=data_root,
-                transform=transforms.Compose([
-                    transforms.RandomChoice(
-                        [transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.3),
-                        transforms.RandomRotation(15),
-                        transforms.RandomAffine(0,scale=(0.7,0.9)),
-                        transforms.RandomAffine(0,scale=(1.1,1.2)),
-                        transforms.RandomAffine(0,shear=10)]),
+                    transform=transforms.Compose([        
+                     transforms.RandomApply(
+                         [transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.3),
+                         transforms.RandomRotation(15),
+                         transforms.RandomAffine(0,scale=(0.7,0.9)),
+                         transforms.RandomAffine(0,scale=(1.1,1.2)),
+                         transforms.RandomAffine(0,shear=10),
+                         ElasticTransform(1000,30)],p=0.5),
                     #transforms.Resize((32,32)),
                     transforms.ToTensor()
                 ])

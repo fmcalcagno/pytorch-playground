@@ -30,7 +30,7 @@ parser.add_argument('--log_interval', type=int, default=1,  help='how many batch
 parser.add_argument('--test_interval', type=int, default=1,  help='how many epochs to wait before another test')
 parser.add_argument('--logdir', default='log', help='folder to save to the log')
 parser.add_argument('--data_root', default="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\testingimages\\", help='folder to save the model')
-parser.add_argument('--csv_path', default="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\labels.csv", help='csv with the labels')
+parser.add_argument('--csv_path', default="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\labels2.csv", help='csv with the labels')
 parser.add_argument('--decreasing_lr', default='80,120', help='decreasing strategy')
 parser.add_argument('--use_pretrained',  default="Local", help='Use pretrained model or not')
 parser.add_argument('--local_model',  default="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\log\\best-90.pth", help='Where the local model is located')

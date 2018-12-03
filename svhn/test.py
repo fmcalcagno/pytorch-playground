@@ -20,7 +20,7 @@ from PIL import Image
 
 use_cuda = torch.cuda.is_available()
 
-model_svhn = model.svhn(32,pretrained="Local",local_model="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\log\\best-460.pth")
+model_svhn = model.svhn(32,pretrained="Local",local_model="C:\\Users\\fcalcagno\\Documents\\pytorch-playground_local\\svhn\\log\\latest.pth")
 
 class MyDataset(Dataset):
     def __init__(self, transform=None, target_transform=None):
